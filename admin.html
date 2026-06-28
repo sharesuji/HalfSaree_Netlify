@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSVP Admin · Varnika's Half Saree Ceremony</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --magenta: #6B0F3A;
+      --gold:    #C9983A;
+      --plum:    #2D1B3D;
+      --muted:   #7A6270;
+      --purple:  #6b3fa0;
+    }
+    body { font-family: 'Jost', sans-serif; background: #f5eff7; color: var(--plum); min-height: 100svh; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100svh; padding: 2rem;
+    }
+    .login-box {
+      background: #fff; padding: 3rem 2.5rem;
+      max-width: 380px; width: 100%;
+      box-shadow: 0 4px 40px rgba(44,27,61,0.12);
+    }
+    .login-box h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 300;
+      color: var(--magenta); margin-bottom: 0.2rem;
+    }
+    .login-box .sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem; }
+    .field-label {
+      display: block; font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem;
+    }
+    .field-input {
+      width: 100%; padding: 0.75rem 1rem;
+      border: 1px solid #ddd; font-family: 'Jost', sans-serif;
+      font-size: 1rem; outline: none; margin-bottom: 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .field-input:focus { border-color: var(--magenta); }
+    .login-btn {
+      width: 100%; padding: 0.85rem;
+      background: var(--magenta); color: #fff; border: none;
+      font-family: 'Jost', sans-serif; font-size: 0.8rem;
+      letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+    }
+    .login-btn:hover { background: var(--plum); }
+    .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    #login-error {
+      color: #c0392b; font-size: 0.82rem;
+      margin-top: 0.75rem; display: none;
+    }
+
+    /* ── ADMIN ── */
+    #admin-panel { display: none; }
+    .admin-header {
+      background: var(--plum); color: #fff;
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .admin-header h1 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 1.4rem; }
+    .admin-header h1 span { color: var(--gold); }
+    .hdr-btns { display: flex; gap: 0.75rem; }
+    .hdr-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; padding: 0.4rem 1rem;
+      font-family: 'Jost', sans-serif; font-size: 0.7rem;
+      letter-spacing: 0.15em; cursor: pointer; text-transform: uppercase;
+    }
+    .hdr-btn:hover { background: rgba(255,255,255,0.12); }
+
+    .admin-body { padding: 2rem; max-width: 1060px; margin: 0 auto; }
+
+    /* loading */
+    .loading-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .spinner {
+      width: 32px; height: 32px; margin: 0 auto 1rem;
+      border: 3px solid #e0d0e8; border-top-color: var(--magenta);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* stats */
+    .stats-row { display: flex; gap: 1rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+    .stat-card {
+      background: #fff; padding: 1.4rem; flex: 1; min-width: 120px;
+      box-shadow: 0 2px 12px rgba(44,27,61,0.06); text-align: center;
+      border-top: 3px solid var(--magenta);
+    }
+    .stat-card.bless { border-top-color: var(--purple); }
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; line-height: 1; color: var(--magenta); }
+    .stat-card.bless .stat-num { color: var(--purple); }
+    .stat-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 0.3rem; }
+
+    /* tabs */
+    .tab-row { display: flex; border-bottom: 2px solid #e8dff0; margin-bottom: 0; }
+    .tab-btn {
+      padding: 0.65rem 1.4rem; border: none; background: transparent;
+      font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+    }
+    .tab-btn.active { color: var(--magenta); border-bottom-color: var(--magenta); font-weight: 600; }
+    .tab-btn.active.bless-tab { color: var(--purple); border-bottom-color: var(--purple); }
+
+    /* table */
+    .table-wrap { background: #fff; box-shadow: 0 2px 12px rgba(44,27,61,0.06); overflow-x: auto; }
+    .table-header {
+      padding: 1.1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #eee; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .table-header h2 { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+    .export-btn {
+      padding: 0.4rem 1rem; background: var(--gold); color: var(--plum);
+      border: none; font-family: 'Jost', sans-serif; font-size: 0.7rem;
+      letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; font-weight: 500;
+    }
+    .export-btn:hover { background: #b5852a; color: #fff; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    thead th {
+      padding: 0.7rem 1.2rem; text-align: left; font-size: 0.63rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+      background: #faf8fc; border-bottom: 1px solid #eee; white-space: nowrap;
+    }
+    tbody td { padding: 0.85rem 1.2rem; border-bottom: 1px solid #f0ecf5; vertical-align: top; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #fdf8ff; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; background: #f0e6f6; color: var(--magenta); font-size: 0.7rem; border-radius: 20px; font-weight: 500; }
+    .badge.bless { background: #ede6f6; color: var(--purple); }
+    .blessing-msg { font-style: italic; color: var(--muted); font-size: 0.86rem; margin-top: 0.25rem; }
+    .empty-state { padding: 4rem 2rem; text-align: center; color: var(--muted); }
+
+    /* setup note */
+    .setup-note {
+      margin-bottom: 1.75rem; padding: 1.1rem 1.4rem;
+      background: #fffbf0; border: 1px solid #f0dfa0; border-left: 3px solid var(--gold);
+      font-size: 0.82rem; color: #6b5520; line-height: 1.65;
+    }
+    .setup-note strong { display: block; margin-bottom: 0.3rem; font-size: 0.85rem; }
+    .setup-note code { background: #f5f0e8; padding: 0.1rem 0.35rem; font-family: monospace; font-size: 0.82rem; }
+    .setup-note a { color: var(--magenta); }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>Admin Access</h1>
+    <p class="sub">Varnika's Half Saree Ceremony · RSVP Dashboard</p>
+    <label class="field-label" for="admin-pwd">Admin Password</label>
+    <input class="field-input" type="password" id="admin-pwd"
+      placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="login-btn" id="login-btn" onclick="doLogin()">View RSVPs</button>
+    <p id="login-error">Incorrect password. Please try again.</p>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="admin-header">
+    <h1>RSVP Admin · <span>Varnika's Half Saree Ceremony</span></h1>
+    <div class="hdr-btns">
+      <button class="hdr-btn" onclick="loadRSVPs()">↻ Refresh</button>
+      <button class="hdr-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+
+    <div class="setup-note" id="setup-note">
+      <strong>⚙️ One-time setup required before this works</strong>
+      In your <a href="https://app.netlify.com" target="_blank">Netlify dashboard</a>, go to
+      <strong>Site → Site configuration → Environment variables</strong> and add these two variables:
+      <br/><br/>
+      <code>NETLIFY_API_TOKEN</code> — your Personal Access Token (create at Netlify → User settings → Applications)<br/>
+      <code>NETLIFY_SITE_ID</code> — found in Site configuration → General → Site ID<br/>
+      <code>ADMIN_PASSWORD</code> — set this to <code>Varnika2026!</code> (or your own password)<br/>
+      <br/>
+      After adding variables, <strong>trigger a redeploy</strong> (Deploys → Trigger deploy). Then this page will work automatically.
+      <br/><br/>
+      <a href="#" onclick="document.getElementById('setup-note').style.display='none';return false" style="font-size:0.78rem">Dismiss</a>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-attending">—</div>
+        <div class="stat-label">Attending</div>
+      </div>
+      <div class="stat-card bless">
+        <div class="stat-num" id="stat-blessings">—</div>
+        <div class="stat-label">Sending Blessings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total-guests">—</div>
+        <div class="stat-label">Total Guests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-with-email">—</div>
+        <div class="stat-label">With Email</div>
+      </div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-all"       onclick="switchTab('all')">All RSVPs</button>
+      <button class="tab-btn"        id="tab-attending" onclick="switchTab('attending')">🌸 Attending</button>
+      <button class="tab-btn bless-tab" id="tab-bless"  onclick="switchTab('bless')">🙏 Blessings</button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-header">
+        <h2 id="table-title">All Responses</h2>
+        <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+      </div>
+      <div id="table-body">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading…</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = 'Varnika2026!';
+  let allRsvps = [];
+  let currentTab = 'all';
+
+  function doLogin() {
+    const pwd   = document.getElementById('admin-pwd').value;
+    const errEl = document.getElementById('login-error');
+    const btn   = document.getElementById('login-btn');
+    errEl.style.display = 'none';
+    if (pwd !== ADMIN_PASSWORD) { errEl.style.display = 'block'; return; }
+    btn.disabled = true; btn.textContent = 'Loading…';
+    sessionStorage.setItem('v_admin', '1');
+    showAdmin();
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('v_admin');
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-btn').disabled = false;
+    document.getElementById('login-btn').textContent = 'View RSVPs';
+    document.getElementById('admin-pwd').value = '';
+    allRsvps = [];
+  }
+
+  function showAdmin() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadRSVPs();
+  }
+
+  async function loadRSVPs() {
+    const tb = document.getElementById('table-body');
+    tb.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Fetching RSVPs…</p></div>`;
+    ['stat-attending','stat-blessings','stat-total-guests','stat-with-email']
+      .forEach(id => document.getElementById(id).textContent = '—');
+
+    try {
+      const res = await fetch('/.netlify/functions/get-rsvps', {
+        headers: { 'x-admin-key': ADMIN_PASSWORD }
+      });
+
+      if (res.status === 401) throw new Error('Auth failed — make sure ADMIN_PASSWORD env var matches.');
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      if (!data.formFound) {
+        tb.innerHTML = `<div class="empty-state">
+          <div style="font-size:2rem">🌸</div>
+          <p>No "rsvp" form found yet on Netlify.</p>
+          <p style="margin-top:0.5rem;font-size:0.8rem">Submit one test RSVP on the live site to register the form, then refresh.</p>
+        </div>`;
+        return;
+      }
+
+      allRsvps = data.submissions;
+      updateStats();
+      renderTable(currentTab);
+      document.getElementById('setup-note').style.display = 'none';
+
+    } catch(err) {
+      tb.innerHTML = `<div class="empty-state">
+        <div style="font-size:2rem">⚠️</div>
+        <p style="color:#c0392b;font-weight:500">Could not load RSVPs</p>
+        <p style="margin-top:0.5rem;font-size:0.82rem;max-width:460px;margin-left:auto;margin-right:auto">${escHtml(err.message)}</p>
+        <p style="margin-top:1rem;font-size:0.8rem">
+          Make sure you've set <strong>NETLIFY_API_TOKEN</strong>, <strong>NETLIFY_SITE_ID</strong>,
+          and <strong>ADMIN_PASSWORD</strong> in your Netlify environment variables and redeployed.
+          <br/><a href="#" onclick="loadRSVPs();return false" style="color:var(--magenta)">Try again ↺</a>
+        </p>
+      </div>`;
+    }
+  }
+
+  function updateStats() {
+    const attending  = allRsvps.filter(r => r.type !== 'bless');
+    const blessings  = allRsvps.filter(r => r.type === 'bless');
+    const totalGuests = attending.reduce((s, r) => s + (parseInt(r.guests)||0) + 1, 0);
+    const withEmail  = allRsvps.filter(r => r.email).length;
+    document.getElementById('stat-attending').textContent    = attending.length;
+    document.getElementById('stat-blessings').textContent    = blessings.length;
+    document.getElementById('stat-total-guests').textContent = totalGuests;
+    document.getElementById('stat-with-email').textContent   = withEmail;
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    ['all','attending','bless'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    });
+    renderTable(tab);
+  }
+
+  function renderTable(tab) {
+    const tb = document.getElementById('table-body');
+    const titles = { all: 'All Responses', attending: 'Attending', bless: 'Sending Blessings' };
+    document.getElementById('table-title').textContent = titles[tab];
+
+    let rows = [...allRsvps].reverse();
+    if (tab === 'attending') rows = rows.filter(r => r.type !== 'bless');
+    if (tab === 'bless')     rows = rows.filter(r => r.type === 'bless');
+
+    if (!rows.length) {
+      tb.innerHTML = `<div class="empty-state">
+        <div style="font-size:2rem">${tab==='bless'?'🙏':'🌸'}</div>
+        <p>No ${tab==='bless'?'blessings':'RSVPs'} yet.</p>
+      </div>`;
+      return;
+    }
+
+    const isAll = tab === 'all';
+    const rowsHtml = rows.map(r => {
+      const isBless = r.type === 'bless';
+      const date = new Date(r.submittedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      const statusBadge = isBless
+        ? `<span class="badge bless">🙏 Blessings</span>`
+        : `<span class="badge">🌸 Attending</span>`;
+      const guestCol = isBless ? `<span style="color:#bbb">—</span>`
+        : (parseInt(r.guests)>0 ? `+${r.guests} guest${r.guests>1?'s':''}` : 'Solo');
+      const contactCol = isBless ? `<span style="color:#bbb">—</span>`
+        : `${r.email ? escHtml(r.email) : '<span style="color:#bbb">—</span>'}${r.phone ? '<br/><span style="font-size:0.8rem;color:var(--muted)">'+escHtml(r.phone)+'</span>' : ''}`;
+      const msgCol = isBless && r.message ? `<div class="blessing-msg">"${escHtml(r.message)}"</div>` : '';
+
+      return `<tr>
+        <td><strong>${escHtml(r.name)}</strong>${msgCol}</td>
+        ${isAll ? `<td>${statusBadge}</td>` : ''}
+        <td>${contactCol}</td>
+        <td>${guestCol}</td>
+        <td style="color:var(--muted);font-size:0.8rem;white-space:nowrap">${date}</td>
+      </tr>`;
+    }).join('');
+
+    tb.innerHTML = `<table>
+      <thead><tr>
+        <th>Name</th>
+        ${isAll ? '<th>Status</th>' : ''}
+        <th>Contact</th>
+        <th>Guests</th>
+        <th>Submitted</th>
+      </tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>`;
+  }
+
+  function exportCSV() {
+    let rows = [...allRsvps].reverse();
+    if (currentTab === 'attending') rows = rows.filter(r => r.type !== 'bless');
+    if (currentTab === 'bless')     rows = rows.filter(r => r.type === 'bless');
+    const header = ['Name','Type','Email','Phone','Additional Guests','Blessing Message','Submitted At'];
+    const csv = [
+      header.join(','),
+      ...rows.map(r => [
+        r.name, r.type==='bless'?'Sending Blessings':'Attending',
+        r.email||'', r.phone||'', r.guests||'0', r.message||'', r.submittedAt
+      ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+    ].join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = `varnika-rsvps-${currentTab}.csv`;
+    a.click();
+  }
+
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  if (sessionStorage.getItem('v_admin') === '1') showAdmin();
+</script>
+</body>
+</html>

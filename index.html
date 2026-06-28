@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Varnika's Half Saree Ceremony · August 22, 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --magenta:   #6B0F3A;
+      --gold:      #C9983A;
+      --gold-lt:   #E8C97A;
+      --ivory:     #FAF3E0;
+      --plum:      #2D1B3D;
+      --blush:     #F7D1E0;
+      --rose-mid:  #A01255;
+      --text:      #2D1B3D;
+      --muted:     #7A6270;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ivory);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ─────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 50% 30%, #8b1a52 0%, #4a2568 55%, #2d1b50 100%);
+    }
+
+    /* Petal canvas */
+    #petal-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-lt);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.3s ease forwards;
+    }
+
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 12vw, 8rem);
+      font-weight: 300;
+      line-height: 1;
+      color: #fff;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      animation: fadeUp 1s 0.55s ease forwards;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--gold-lt);
+    }
+
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--blush);
+      margin-top: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.8s ease forwards;
+    }
+
+    .divider-gold {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 1.5rem 0;
+      opacity: 0;
+      animation: fadeUp 1s 1s ease forwards;
+    }
+    .divider-gold span { display: block; height: 1px; width: 60px; background: var(--gold); }
+    .divider-gold svg { width: 20px; height: 20px; fill: var(--gold); }
+
+    .hero-date {
+      font-family: 'Jost', sans-serif;
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: #d8c5d2;
+      opacity: 0;
+      animation: fadeUp 1s 1.1s ease forwards;
+    }
+
+    .hero-cta {
+      margin-top: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1s 1.3s ease forwards;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.75rem 2.25rem;
+      border: 1.5px solid var(--gold);
+      color: var(--gold-lt);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .btn-primary:hover {
+      background: var(--gold);
+      color: var(--plum);
+    }
+
+    /* ── KOLAM DIVIDER ────────────────────────────────────── */
+    .kolam-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2.5rem 0;
+    }
+    .kolam-divider::before,
+    .kolam-divider::after {
+      content: '';
+      flex: 1;
+      max-width: 160px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+    .kolam-divider::after {
+      background: linear-gradient(to left, transparent, var(--gold));
+    }
+    .kolam-icon {
+      font-size: 1.4rem;
+      color: var(--gold);
+    }
+
+    /* ── SECTIONS ─────────────────────────────────────────── */
+    .section {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+
+    .section-label {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    h2.section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--magenta);
+      margin-bottom: 1.25rem;
+    }
+
+    .section-body {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.85;
+    }
+
+    /* ── WHAT IS HALF SAREE ───────────────────────────────── */
+    .about-band {
+      background: linear-gradient(135deg, #f9eef5 0%, var(--ivory) 100%);
+      border-top: 1px solid #e8d0dc;
+      border-bottom: 1px solid #e8d0dc;
+    }
+
+    /* ── EVENT DETAILS ────────────────────────────────────── */
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .detail-card {
+      background: #fff;
+      border: 1px solid #eadde5;
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+    .detail-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--magenta), var(--gold));
+    }
+
+    .detail-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .detail-label {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .detail-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--magenta);
+      line-height: 1.3;
+    }
+
+    .map-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--magenta);
+      text-decoration: none;
+      border-bottom: 1px solid var(--magenta);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .map-link:hover { color: var(--gold); border-color: var(--gold); }
+
+    /* ── COUNTDOWN ────────────────────────────────────────── */
+    .countdown-band {
+      background: linear-gradient(135deg, var(--plum) 0%, var(--magenta) 100%);
+      padding: 4rem 1.5rem;
+      text-align: center;
+      color: #fff;
+    }
+
+    .countdown-label {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-lt);
+      margin-bottom: 2rem;
+    }
+
+    .countdown-grid {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .countdown-item {
+      min-width: 80px;
+    }
+
+    .countdown-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 300;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .countdown-unit {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blush);
+      margin-top: 0.3rem;
+    }
+
+    /* ── RSVP ─────────────────────────────────────────────── */
+    .rsvp-band {
+      background: #fff8f2;
+      border-top: 1px solid #f0dfe8;
+    }
+
+    /* ── attendance toggle ── */
+    .attend-toggle {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem auto 0;
+      max-width: 540px;
+    }
+    .attend-btn {
+      flex: 1;
+      padding: 1.1rem 1rem;
+      border: 2px solid #ddd0d8;
+      background: #fff;
+      cursor: pointer;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .attend-btn .ab-icon { font-size: 1.6rem; }
+    .attend-btn:hover { border-color: var(--magenta); color: var(--magenta); }
+    .attend-btn.active-yes {
+      border-color: var(--magenta);
+      background: linear-gradient(135deg, #fdf0f6, #fff);
+      color: var(--magenta);
+    }
+    .attend-btn.active-bless {
+      border-color: #7a5c9a;
+      background: linear-gradient(135deg, #f5f0fd, #fff);
+      color: #5a3a80;
+    }
+
+    /* ── shared form styles ── */
+    .rsvp-form {
+      max-width: 540px;
+      margin: 1.75rem auto 0;
+      display: none;
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label {
+      display: block;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .form-label .req { color: var(--magenta); margin-left: 2px; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd0d8;
+      background: #fff;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--magenta); }
+    .form-select-wrap { position: relative; }
+    .form-select-wrap::after {
+      content: '▾';
+      position: absolute; right: 1rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); pointer-events: none;
+    }
+
+    .btn-rsvp {
+      display: block; width: 100%; padding: 1rem;
+      background: linear-gradient(135deg, var(--magenta), var(--rose-mid));
+      color: #fff; border: none;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase;
+      cursor: pointer; transition: opacity 0.25s, transform 0.2s; margin-top: 0.5rem;
+    }
+    .btn-rsvp.bless-btn {
+      background: linear-gradient(135deg, #6b3fa0, #9b5fd4);
+    }
+    .btn-rsvp:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-rsvp:active { transform: translateY(0); }
+    .btn-rsvp:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .rsvp-success {
+      display: none; text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: #fff8f0; border: 1px solid #e8d5c4;
+      max-width: 540px; margin: 1.75rem auto 0;
+    }
+    .rsvp-success.bless-success { background: #f8f2ff; border-color: #d5c4e8; }
+    .rsvp-success .check { font-size: 2.5rem; margin-bottom: 1rem; }
+    .rsvp-success h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; color: var(--magenta); margin-bottom: 0.5rem;
+    }
+    .rsvp-success.bless-success h3 { color: #6b3fa0; }
+    .rsvp-success p { color: var(--muted); font-size: 0.95rem; }
+
+    .rsvp-note {
+      font-size: 0.8rem; color: var(--muted);
+      text-align: center; margin-top: 1rem;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────── */
+    footer {
+      background: var(--plum);
+      color: #c0adc0;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+    footer .footer-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--gold-lt);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── ANIMATIONS ───────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .details-grid { grid-template-columns: 1fr 1fr; }
+      .countdown-grid { gap: 1rem; }
+      .countdown-item { min-width: 60px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+<!-- Hidden form for Netlify detection -->
+<form name="rsvp" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name" />
+  <input type="email" name="email" />
+  <input type="tel" name="phone" />
+  <input type="text" name="guests" />
+  <input name="bot-field" />
+</form>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="hero">
+  <canvas id="petal-canvas"></canvas>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">✦ Half Saree Ceremony · Vonila Veduka ✦</p>
+    <h1 class="hero-name"><em>Varnika</em></h1>
+    <p class="hero-subtitle">steps into the grace of womanhood</p>
+
+    <div class="divider-gold">
+      <span></span>
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm1-13h-2v6l5.2 3.2.8-1.3-4-2.4V7z"/></svg>
+      <span></span>
+    </div>
+
+    <p class="hero-date">August 22, 2026 &nbsp;·&nbsp; 6:00 PM Onwards</p>
+
+    <div class="hero-cta">
+      <a href="#rsvp" class="btn-primary">Attend the Celebration</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ─────────────────────────────────────────────────── -->
+<div class="about-band">
+  <div class="section reveal">
+    <span class="section-label">About the Ceremony</span>
+    <h2 class="section-title">What is a Half Saree Ceremony?</h2>
+    <p class="section-body">
+      The <em>Half Saree</em> — or <em>Vonila Veduka</em> — ceremony is one of the most cherished traditions in Telugu culture, a joyful rite of passage marking a young woman's transition from girlhood to womanhood. Dressed for the first time in a half saree draped in the graceful Telugu style, she is welcomed into a new chapter of life with blessings, rituals, and the warmth of family and loved ones gathered around her.
+    </p>
+    <p class="section-body" style="margin-top: 1rem;">
+      It is a day of flowers, music, dancing, and pure joy — a celebration full of colour, laughter, and memories made on the dance floor. We cannot wait to share this vibrant occasion with you as we celebrate our beloved <em>Varnika</em>.
+    </p>
+  </div>
+</div>
+
+<!-- ── EVENT DETAILS ─────────────────────────────────────────── -->
+<div class="section reveal">
+  <span class="section-label">Event Details</span>
+  <h2 class="section-title">Join us for the celebration</h2>
+  <p class="section-body">We would be honoured by your presence as we bless Varnika on this auspicious evening.</p>
+
+  <div class="details-grid">
+    <div class="detail-card">
+      <span class="detail-icon">🌸</span>
+      <p class="detail-label">Date</p>
+      <p class="detail-value">August 22<br/>2026</p>
+    </div>
+    <div class="detail-card">
+      <span class="detail-icon">🕕</span>
+      <p class="detail-label">Time</p>
+      <p class="detail-value">6:00 PM<br/>Onwards</p>
+    </div>
+    <div class="detail-card">
+      <span class="detail-icon">🏡</span>
+      <p class="detail-label">Venue</p>
+      <p class="detail-value">Dia Amore<br/>Villa</p>
+    </div>
+    <div class="detail-card">
+      <span class="detail-icon">📍</span>
+      <p class="detail-label">Address</p>
+      <p class="detail-value">32218 Rogers Rd<br/>Fulshear, TX 77441</p>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top: 1.5rem;">
+    <a class="map-link" href="https://maps.google.com/?q=32218+Rogers+Rd+Fulshear+TX+77441" target="_blank" rel="noopener">
+      Open in Google Maps ↗
+    </a>
+  </div>
+</div>
+
+<!-- ── COUNTDOWN ─────────────────────────────────────────────── -->
+<div class="countdown-band">
+  <p class="countdown-label">Counting down to the big day</p>
+  <div class="countdown-grid">
+    <div class="countdown-item">
+      <div class="countdown-num" id="cd-days">—</div>
+      <div class="countdown-unit">Days</div>
+    </div>
+    <div class="countdown-item">
+      <div class="countdown-num" id="cd-hours">—</div>
+      <div class="countdown-unit">Hours</div>
+    </div>
+    <div class="countdown-item">
+      <div class="countdown-num" id="cd-mins">—</div>
+      <div class="countdown-unit">Minutes</div>
+    </div>
+    <div class="countdown-item">
+      <div class="countdown-num" id="cd-secs">—</div>
+      <div class="countdown-unit">Seconds</div>
+    </div>
+  </div>
+</div>
+
+<!-- kolam divider -->
+<div class="kolam-divider">
+  <span class="kolam-icon">✿</span>
+</div>
+
+<!-- ── RSVP ───────────────────────────────────────────────────── -->
+<div class="rsvp-band" id="rsvp">
+  <div class="section reveal">
+    <span class="section-label">RSVP</span>
+    <h2 class="section-title">Will you join us?</h2>
+    <p class="section-body" style="text-align:center;">
+      We'd love to know you'll be there — or have your blessings with us.
+    </p>
+
+    <!-- Attend toggle -->
+    <div class="attend-toggle">
+      <button class="attend-btn" id="btn-yes" onclick="selectAttend('yes')">
+        <span class="ab-icon">🌸</span>
+        <span>Joyfully Attending</span>
+      </button>
+      <button class="attend-btn" id="btn-bless" onclick="selectAttend('bless')">
+        <span class="ab-icon">🙏</span>
+        <span>Sending Blessings</span>
+      </button>
+    </div>
+
+    <!-- ATTENDING form -->
+    <div class="rsvp-form" id="form-yes">
+      <div id="rsvp-form-wrap-yes">
+        <div class="form-group">
+          <label class="form-label" for="rsvp-name-yes">Name <span class="req">*</span></label>
+          <input class="form-input" type="text" id="rsvp-name-yes" placeholder="Your full name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rsvp-email-yes">Email</label>
+          <input class="form-input" type="email" id="rsvp-email-yes" placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rsvp-phone-yes">Phone</label>
+          <input class="form-input" type="tel" id="rsvp-phone-yes" placeholder="(555) 000-0000" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rsvp-guests-yes">Number of Guests</label>
+          <div class="form-select-wrap">
+            <select class="form-select" id="rsvp-guests-yes">
+              <option value="">Just me</option>
+              <option value="1">1 additional guest (2 total)</option>
+              <option value="2">2 additional guests (3 total)</option>
+              <option value="3">3 additional guests (4 total)</option>
+              <option value="4">4 additional guests (5 total)</option>
+              <option value="5">5+ additional guests</option>
+            </select>
+          </div>
+        </div>
+        <p id="rsvp-error-yes" style="color:#c0392b; font-size:0.85rem; margin-bottom:0.75rem; display:none;"></p>
+        <button class="btn-rsvp" id="rsvp-submit-yes" onclick="submitRSVP('yes')">
+          Confirm Attendance
+        </button>
+        <p class="rsvp-note">Your response is saved securely.</p>
+      </div>
+      <div class="rsvp-success" id="rsvp-success-yes">
+        <div class="check">🌸</div>
+        <h3>You're on the list!</h3>
+        <p>We are so excited to celebrate with you.<br/>See you on August 22nd!</p>
+      </div>
+    </div>
+
+    <!-- BLESSING form -->
+    <div class="rsvp-form" id="form-bless">
+      <div id="rsvp-form-wrap-bless">
+        <div class="form-group">
+          <label class="form-label" for="rsvp-name-bless">Name <span class="req">*</span></label>
+          <input class="form-input" type="text" id="rsvp-name-bless" placeholder="Your full name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="rsvp-msg-bless">A Blessing for Varnika</label>
+          <textarea class="form-textarea" id="rsvp-msg-bless" placeholder="Share a warm wish or blessing for this special milestone…"></textarea>
+        </div>
+        <p id="rsvp-error-bless" style="color:#c0392b; font-size:0.85rem; margin-bottom:0.75rem; display:none;"></p>
+        <button class="btn-rsvp bless-btn" id="rsvp-submit-bless" onclick="submitRSVP('bless')">
+          Send My Blessings
+        </button>
+        <p class="rsvp-note">Your love will be felt even from afar.</p>
+      </div>
+      <div class="rsvp-success bless-success" id="rsvp-success-bless">
+        <div class="check">🙏</div>
+        <h3>Blessings Received!</h3>
+        <p>Your love and wishes will be treasured on this special day.<br/>Thank you for being with us in spirit.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <span class="footer-name">Varnika's Half Saree Ceremony</span>
+  August 22, 2026 &nbsp;·&nbsp; Dia Amore Villa, Fulshear, TX
+  <br/><br/>
+  Made with love ♡
+</footer>
+
+<!-- ── SCRIPTS ─────────────────────────────────────────────────── -->
+<script>
+  /* ── Petal canvas ─── */
+  const canvas = document.getElementById('petal-canvas');
+  const ctx = canvas.getContext('2d');
+  let petals = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const PETAL_COLORS = ['#F7C6D8','#E8B4C8','#F9D55A','#F4A261','#FFB3C6','#FFC8A2'];
+
+  function Petal() {
+    this.reset = function() {
+      this.x = Math.random() * canvas.width;
+      this.y = -20 - Math.random() * 80;
+      this.size = 5 + Math.random() * 8;
+      this.speed = 0.6 + Math.random() * 1.2;
+      this.drift = (Math.random() - 0.5) * 0.8;
+      this.rot = Math.random() * Math.PI * 2;
+      this.rotSpeed = (Math.random() - 0.5) * 0.04;
+      this.color = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+      this.opacity = 0.6 + Math.random() * 0.4;
+    };
+    this.reset();
+  }
+
+  for (let i = 0; i < 55; i++) {
+    const p = new Petal();
+    p.y = Math.random() * canvas.height; // spread initial positions
+    petals.push(p);
+  }
+
+  function drawPetal(p) {
+    ctx.save();
+    ctx.globalAlpha = p.opacity;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.size * 0.4, p.size, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of petals) {
+      p.y += p.speed;
+      p.x += p.drift;
+      p.rot += p.rotSpeed;
+      if (p.y > canvas.height + 20) p.reset();
+      drawPetal(p);
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  /* ── Countdown ─── */
+  function updateCountdown() {
+    const target = new Date('2026-08-22T18:00:00');
+    const now = new Date();
+    const diff = target - now;
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '0';
+      document.getElementById('cd-hours').textContent = '0';
+      document.getElementById('cd-mins').textContent = '0';
+      document.getElementById('cd-secs').textContent = '0';
+      return;
+    }
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const s = Math.floor((diff % (1000*60)) / 1000);
+    document.getElementById('cd-days').textContent  = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  /* ── Scroll reveal ─── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  /* ── Attendance toggle ─── */
+  function selectAttend(type) {
+    document.getElementById('btn-yes').classList.remove('active-yes');
+    document.getElementById('btn-bless').classList.remove('active-bless');
+    document.getElementById('form-yes').style.display = 'none';
+    document.getElementById('form-bless').style.display = 'none';
+
+    if (type === 'yes') {
+      document.getElementById('btn-yes').classList.add('active-yes');
+      document.getElementById('form-yes').style.display = 'block';
+    } else {
+      document.getElementById('btn-bless').classList.add('active-bless');
+      document.getElementById('form-bless').style.display = 'block';
+    }
+  }
+
+  /* ── RSVP: Netlify Forms + localStorage fallback ─── */
+  async function submitRSVP(type) {
+    const isYes   = type === 'yes';
+    const sfx     = isYes ? 'yes' : 'bless';
+    const btn     = document.getElementById('rsvp-submit-' + sfx);
+    const errEl   = document.getElementById('rsvp-error-' + sfx);
+    const name    = document.getElementById('rsvp-name-' + sfx).value.trim();
+
+    errEl.style.display = 'none';
+    if (!name) {
+      errEl.textContent = 'Please enter your name.';
+      errEl.style.display = 'block';
+      document.getElementById('rsvp-name-' + sfx).focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    const entry = { id: Date.now(), type, name, submittedAt: new Date().toISOString() };
+
+    if (isYes) {
+      entry.email  = document.getElementById('rsvp-email-yes').value.trim();
+      entry.phone  = document.getElementById('rsvp-phone-yes').value.trim();
+      entry.guests = document.getElementById('rsvp-guests-yes').value || '0';
+    } else {
+      entry.message = document.getElementById('rsvp-msg-bless').value.trim();
+    }
+
+    // 1. Save locally
+    try {
+      const existing = JSON.parse(localStorage.getItem('varnika_rsvps') || '[]');
+      existing.push(entry);
+      localStorage.setItem('varnika_rsvps', JSON.stringify(existing));
+    } catch(e) {}
+
+    // 2. Netlify Forms
+    try {
+      const params = new URLSearchParams({ 'form-name': 'rsvp', ...entry });
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
+      });
+    } catch(e) {}
+
+    setTimeout(() => {
+      document.getElementById('rsvp-form-wrap-' + sfx).style.display = 'none';
+      document.getElementById('rsvp-success-' + sfx).style.display = 'block';
+    }, 500);
+  }
+</script>
+</body>
+</html>
