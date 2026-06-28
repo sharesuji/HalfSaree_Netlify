@@ -231,23 +231,29 @@
 </div>
 
 <script>
-  const ADMIN_PASSWORD = 'Varnika2026!';
   let allRsvps = [];
   let currentTab = 'all';
 
   function doLogin() {
-    const pwd   = document.getElementById('admin-pwd').value;
+    const pwd   = document.getElementById('admin-pwd').value.trim();
     const errEl = document.getElementById('login-error');
     const btn   = document.getElementById('login-btn');
     errEl.style.display = 'none';
-    if (pwd !== ADMIN_PASSWORD) { errEl.style.display = 'block'; return; }
+    if (!pwd) {
+      errEl.textContent = 'Please enter the admin password.';
+      errEl.style.display = 'block';
+      return;
+    }
+    // Store whatever is entered and let the server validate
     btn.disabled = true; btn.textContent = 'Loading…';
     sessionStorage.setItem('v_admin', '1');
+    sessionStorage.setItem('v_pwd', pwd);
     showAdmin();
   }
 
   function doLogout() {
     sessionStorage.removeItem('v_admin');
+    sessionStorage.removeItem('v_pwd');
     document.getElementById('admin-panel').style.display = 'none';
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('login-btn').disabled = false;
@@ -269,9 +275,10 @@
       .forEach(id => document.getElementById(id).textContent = '—');
 
     try {
-      const res = await fetch(`/.netlify/functions/get-rsvps?key=${encodeURIComponent(ADMIN_PASSWORD)}`);
+      const pwd = sessionStorage.getItem('v_pwd') || '';
+      const res = await fetch(`/.netlify/functions/get-rsvps?key=${encodeURIComponent(pwd)}`);
 
-      if (res.status === 401) throw new Error('Auth failed — make sure ADMIN_PASSWORD env var matches.');
+      if (res.status === 401) { sessionStorage.removeItem('v_admin'); sessionStorage.removeItem('v_pwd'); document.getElementById('admin-panel').style.display='none'; document.getElementById('login-screen').style.display='flex'; document.getElementById('login-btn').disabled=false; document.getElementById('login-btn').textContent='View RSVPs'; const e=document.getElementById('login-error'); e.textContent='Incorrect password.'; e.style.display='block'; return; }
       if (!res.ok) throw new Error(`Server error ${res.status}`);
 
       const data = await res.json();
@@ -397,7 +404,7 @@
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  if (sessionStorage.getItem('v_admin') === '1') showAdmin();
+  if (sessionStorage.getItem('v_admin') === '1' && sessionStorage.getItem('v_pwd')) showAdmin();
 </script>
 </body>
 </html>
