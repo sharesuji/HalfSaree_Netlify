@@ -504,11 +504,14 @@
 </head>
 <body>
 <!-- Hidden form for Netlify detection -->
-<form name="rsvp" netlify netlify-honeypot="bot-field" hidden>
-  <input type="text" name="name" />
+<!-- Netlify Forms detection tag - DO NOT REMOVE -->
+<form name="rsvp" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+  <input type="text"  name="name" />
   <input type="email" name="email" />
-  <input type="tel" name="phone" />
-  <input type="text" name="guests" />
+  <input type="tel"   name="phone" />
+  <input type="text"  name="guests" />
+  <input type="text"  name="type" />
+  <input type="text"  name="message" />
   <input name="bot-field" />
 </form>
 
