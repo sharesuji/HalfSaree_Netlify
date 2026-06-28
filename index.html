@@ -479,6 +479,27 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
+
+    /* ── HOME BUTTON (fixed, bottom right) ── */
+    .home-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--magenta);
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.65rem 1.25rem;
+      box-shadow: 0 4px 20px rgba(107,15,58,0.35);
+      z-index: 999;
+      transition: background 0.2s, transform 0.2s;
+      display: none;
+    }
+    .home-btn:hover { background: var(--plum); transform: translateY(-2px); }
+    .home-btn.visible { display: block; }
   </style>
 </head>
 <body>
@@ -688,8 +709,21 @@
   Made with love ♡
 </footer>
 
+<!-- Home button (appears after scrolling past hero) -->
+<a href="#" class="home-btn" id="home-btn" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+  ↑ Back to Top
+</a>
+
+
 <!-- ── SCRIPTS ─────────────────────────────────────────────────── -->
 <script>
+
+  /* ── Home/back-to-top button ── */
+  const homeBtn = document.getElementById('home-btn');
+  window.addEventListener('scroll', () => {
+    homeBtn.classList.toggle('visible', window.scrollY > window.innerHeight * 0.6);
+  });
+
   /* ── Petal canvas ─── */
   const canvas = document.getElementById('petal-canvas');
   const ctx = canvas.getContext('2d');
