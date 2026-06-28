@@ -1,7 +1,7 @@
 exports.handler = async function(event) {
   const CORS = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, x-admin-key',
+    'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };
 
@@ -9,38 +9,19 @@ exports.handler = async function(event) {
     return { statusCode: 204, headers: CORS, body: '' };
   }
 
-  const adminKey  = event.headers['x-admin-key'] || '';
   const password  = process.env.ADMIN_PASSWORD    || '';
   const NETLIFY_TOKEN   = process.env.NETLIFY_API_TOKEN || '';
   const NETLIFY_SITE_ID = process.env.NETLIFY_SITE_ID   || '';
 
-  // ── DEBUG: always return what we see (remove after fixing) ──
-  if (event.queryStringParameters && event.queryStringParameters.debug === '1') {
-    return {
-      statusCode: 200,
-      headers: CORS,
-      body: JSON.stringify({
-        receivedKey:      adminKey,
-        receivedKeyLen:   adminKey.length,
-        envPassword:      password ? password.replace(/./g, '*') : '(empty)',
-        envPasswordLen:   password.length,
-        match:            adminKey === password,
-        hasToken:         !!NETLIFY_TOKEN,
-        hasSiteId:        !!NETLIFY_SITE_ID,
-        allEnvKeys:       Object.keys(process.env).filter(k => k.startsWith('NETLIFY') || k.startsWith('ADMIN')),
-      }),
-    };
-  }
+  // Read password from query param instead of header
+  const adminKey = (event.queryStringParameters && event.queryStringParameters.key) || '';
 
   if (!password) {
     return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: 'ADMIN_PASSWORD env var not set.' }) };
   }
 
   if (adminKey !== password) {
-    return { statusCode: 401, headers: CORS, body: JSON.stringify({
-      error: 'Unauthorized — wrong admin password.',
-      hint: `Key length: ${adminKey.length}, Env length: ${password.length}`
-    })};
+    return { statusCode: 401, headers: CORS, body: JSON.stringify({ error: 'Unauthorized.' }) };
   }
 
   if (!NETLIFY_TOKEN)   return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: 'NETLIFY_API_TOKEN not set.' }) };
