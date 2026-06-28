@@ -92,6 +92,7 @@
   <div class="admin-header">
     <h1>RSVP Admin · <span>Varnika's Half Saree Ceremony</span></h1>
     <div class="hdr-btns">
+      <a class="hdr-btn" href="/" style="text-decoration:none">⌂ Home</a>
       <button class="hdr-btn" onclick="loadRSVPs()">↻ Refresh</button>
       <button class="hdr-btn" onclick="doLogout()">Sign Out</button>
     </div>
@@ -170,14 +171,33 @@
       if (!fRes.ok) throw new Error(`Forms API error: ${fRes.status}`);
 
       const forms = await fRes.json();
-      const form  = forms.find(f => f.name === 'rsvp');
+
+      // Show all available forms in console for debugging
+      console.log('All Netlify forms:', forms.map(f => f.name + ' (id:' + f.id + ', submissions:' + f.submission_count + ')'));
+
+      // Try to find rsvp form — check all possible name variations
+      const form = forms.find(f =>
+        f.name === 'rsvp' ||
+        f.name === 'RSVP' ||
+        f.name.toLowerCase().includes('rsvp')
+      );
 
       if (!form) {
+        const formNames = forms.length
+          ? 'Forms found: ' + forms.map(f => '"' + f.name + '" (' + f.submission_count + ' submissions)').join(', ')
+          : 'No forms found at all on this site.';
         tb.innerHTML = `<div class="empty-state"><div style="font-size:2rem">🌸</div>
-          <p>No "rsvp" form found yet.</p>
-          <p style="margin-top:0.5rem;font-size:0.8rem">Submit one test RSVP on the live site first, then refresh.</p></div>`;
+          <p style="font-weight:500">No RSVP form found on this Netlify site.</p>
+          <p style="margin-top:0.75rem;font-size:0.82rem;color:#c0392b">${formNames}</p>
+          <p style="margin-top:0.75rem;font-size:0.8rem;max-width:420px;margin-left:auto;margin-right:auto">
+            This usually means no one has submitted an RSVP yet on this deployment, OR
+            the hidden form tag wasn't detected by Netlify on deploy.<br/><br/>
+            <strong>Fix:</strong> Submit one test RSVP on the live site, then click Refresh.
+          </p></div>`;
         return;
       }
+
+      console.log('Found form:', form.name, 'with', form.submission_count, 'submissions');
 
       // Step 2: get submissions
       let all = [], page = 1;
