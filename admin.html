@@ -163,41 +163,60 @@
     ['stat-attending','stat-blessings','stat-guests','stat-email'].forEach(id => document.getElementById(id).textContent = '—');
 
     try {
-      // Step 1: get forms
+      // Step 1: Try sites API first, then fall back to account-level forms API
+      let form = null;
+
+      // Try 1: site-level forms
       const fRes = await fetch(`https://api.netlify.com/api/v1/sites/${SITE_ID}/forms`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (fRes.status === 401) throw new Error('Token invalid or expired — please sign out and use a fresh token.');
-      if (!fRes.ok) throw new Error(`Forms API error: ${fRes.status}`);
 
-      const forms = await fRes.json();
+      if (fRes.ok) {
+        const siteForms = await fRes.json();
+        console.log('Site forms:', siteForms);
+        form = siteForms.find(f => f.name && f.name.toLowerCase().includes('rsvp'));
+      }
 
-      // Show all available forms in console for debugging
-      console.log('All Netlify forms:', forms.map(f => f.name + ' (id:' + f.id + ', submissions:' + f.submission_count + ')'));
+      // Try 2: account-level forms API (works with newer Netlify Projects)
+      if (!form) {
+        const aRes = await fetch(`https://api.netlify.com/api/v1/forms?site_id=${SITE_ID}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (aRes.ok) {
+          const allForms = await aRes.json();
+          console.log('Account forms:', allForms);
+          form = allForms.find(f => f.name && f.name.toLowerCase().includes('rsvp'));
+        }
+      }
 
-      // Try to find rsvp form — check all possible name variations
-      const form = forms.find(f =>
-        f.name === 'rsvp' ||
-        f.name === 'RSVP' ||
-        f.name.toLowerCase().includes('rsvp')
-      );
+      // Try 3: fetch all account forms and filter by site_id
+      if (!form) {
+        const aRes2 = await fetch(`https://api.netlify.com/api/v1/forms`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (aRes2.ok) {
+          const allForms2 = await aRes2.json();
+          console.log('All account forms:', allForms2);
+          form = allForms2.find(f =>
+            f.name && f.name.toLowerCase().includes('rsvp') &&
+            (f.site_id === SITE_ID || !f.site_id)
+          );
+          // If still not found, just grab any rsvp form
+          if (!form) form = allForms2.find(f => f.name && f.name.toLowerCase().includes('rsvp'));
+        }
+      }
 
       if (!form) {
-        const formNames = forms.length
-          ? 'Forms found: ' + forms.map(f => '"' + f.name + '" (' + f.submission_count + ' submissions)').join(', ')
-          : 'No forms found at all on this site.';
         tb.innerHTML = `<div class="empty-state"><div style="font-size:2rem">🌸</div>
-          <p style="font-weight:500">No RSVP form found on this Netlify site.</p>
-          <p style="margin-top:0.75rem;font-size:0.82rem;color:#c0392b">${formNames}</p>
-          <p style="margin-top:0.75rem;font-size:0.8rem;max-width:420px;margin-left:auto;margin-right:auto">
-            This usually means no one has submitted an RSVP yet on this deployment, OR
-            the hidden form tag wasn't detected by Netlify on deploy.<br/><br/>
-            <strong>Fix:</strong> Submit one test RSVP on the live site, then click Refresh.
+          <p style="font-weight:500">RSVP form found in Netlify dashboard but API can't locate it.</p>
+          <p style="margin-top:0.75rem;font-size:0.8rem;max-width:460px;margin-left:auto;margin-right:auto">
+            Check browser console (F12) for debug info. The form exists — try refreshing or creating a new token.
           </p></div>`;
         return;
       }
 
-      console.log('Found form:', form.name, 'with', form.submission_count, 'submissions');
+      console.log('Found form:', form.name, form.id, 'submissions:', form.submission_count);
 
       // Step 2: get submissions
       let all = [], page = 1;
