@@ -239,20 +239,23 @@
       console.log('Total submissions fetched:', all.length);
 
       allRsvps = all.map(s => {
-        // Handle both data.X and top-level X formats
         const d = s.data || s;
+        const rawType = (d.type || s.type || 'yes').toString().trim().toLowerCase();
+        // Normalize type — 'bless', 'blessing', 'no' all map to bless; everything else is attending
+        const type = (rawType === 'bless' || rawType === 'blessing' || rawType === 'no') ? 'bless' : 'yes';
+        console.log('Submission:', d.name, '| raw type:', rawType, '| mapped:', type, '| full data:', d);
         return {
-          name:        d.name    || s.name    || '',
-          email:       d.email   || s.email   || '',
-          phone:       d.phone   || s.phone   || '',
-          guests:      d.guests  || s.guests  || '0',
-          type:        d.type    || s.type    || 'yes',
-          message:     d.message || s.message || '',
+          name:        (d.name    || s.name    || '').trim(),
+          email:       (d.email   || s.email   || '').trim(),
+          phone:       (d.phone   || s.phone   || '').trim(),
+          guests:      (d.guests  || s.guests  || '0').toString(),
+          type:        type,
+          message:     (d.message || s.message || '').trim(),
           submittedAt: s.created_at || s.submittedAt || '',
         };
       });
 
-      console.log('Mapped RSVPs:', allRsvps);
+      console.log('All mapped RSVPs:', allRsvps);
 
       updateStats();
       renderTable(currentTab);

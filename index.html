@@ -861,12 +861,13 @@
     // that Netlify's form handler stores correctly
     const params = new URLSearchParams();
     params.append('form-name', 'rsvp');
-    params.append('type',    type);
+    params.append('type',    type);       // 'yes' or 'bless'
     params.append('name',    name);
     params.append('email',   email);
     params.append('phone',   phone);
     params.append('guests',  guests);
     params.append('message', message);
+    console.log('Submitting RSVP:', type, name, params.toString());
 
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/');
