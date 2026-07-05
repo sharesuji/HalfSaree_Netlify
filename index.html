@@ -859,33 +859,21 @@
 
     // Use XMLHttpRequest — avoids page navigation while still being a proper form POST
     // that Netlify's form handler stores correctly
-    const params = new URLSearchParams();
-    params.append('form-name', 'rsvp');
-    params.append('type',    type);       // 'yes' or 'bless'
-    params.append('name',    name);
-    params.append('email',   email);
-    params.append('phone',   phone);
-    params.append('guests',  guests);
-    params.append('message', message);
-    console.log('Submitting RSVP:', type, name, params.toString());
+    // Submit to Netlify Blobs via serverless function
+    try {
+      const res = await fetch('/.netlify/functions/submit-rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, guests, type, message })
+      });
+      const data = await res.json();
+      console.log('RSVP submit result:', data);
+    } catch(e) {
+      console.error('RSVP submit error:', e);
+    }
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-    xhr.onload = function() {
-      console.log('RSVP submit status:', xhr.status, xhr.responseText.substring(0, 100));
-      document.getElementById('rsvp-form-wrap-' + sfx).style.display = 'none';
-      document.getElementById('rsvp-success-' + sfx).style.display   = 'block';
-    };
-
-    xhr.onerror = function() {
-      // Still show success — submission may have gone through
-      document.getElementById('rsvp-form-wrap-' + sfx).style.display = 'none';
-      document.getElementById('rsvp-success-' + sfx).style.display   = 'block';
-    };
-
-    xhr.send(params.toString());
+    document.getElementById('rsvp-form-wrap-' + sfx).style.display = 'none';
+    document.getElementById('rsvp-success-' + sfx).style.display   = 'block';
   }
 </script>
 </body>
