@@ -1,7 +1,15 @@
 [build]
   functions = "netlify/functions"
 
+[build.processing]
+  skip_processing = false
+
 [[redirects]]
   from = "/admin"
   to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/thank-you"
+  to = "/thank-you.html"
   status = 200

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank You · Varnika's Half Saree Ceremony</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Jost', sans-serif;
+      background: radial-gradient(ellipse at 50% 30%, #8b1a52 0%, #4a2568 55%, #2d1b50 100%);
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      color: #fff;
+    }
+    .card {
+      max-width: 500px;
+    }
+    .icon { font-size: 3.5rem; margin-bottom: 1.5rem; }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 300;
+      color: #E8C97A;
+      margin-bottom: 0.75rem;
+      line-height: 1.1;
+    }
+    p {
+      font-size: 1rem;
+      color: #d8c5d2;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .back-btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      border: 1.5px solid #E8C97A;
+      color: #E8C97A;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .back-btn:hover { background: #E8C97A; color: #2d1b50; }
+    .divider {
+      display: flex; align-items: center; gap: 0.75rem;
+      justify-content: center; margin: 1.5rem 0;
+    }
+    .divider span { display: block; height: 1px; width: 50px; background: #C9983A; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon" id="icon">🌸</div>
+    <h1 id="heading">Thank You!</h1>
+    <div class="divider"><span></span>✦<span></span></div>
+    <p id="message">
+      Your RSVP has been received.<br/>
+      We can't wait to celebrate with you on August 22nd!
+    </p>
+    <a href="/" class="back-btn">← Back to Invitation</a>
+  </div>
+  <script>
+    // Detect if blessing or attending based on referrer/URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('type') === 'bless') {
+      document.getElementById('icon').textContent = '🙏';
+      document.getElementById('heading').textContent = 'Blessings Received!';
+      document.getElementById('message').innerHTML = 'Your love and warm wishes will be felt<br/>on this beautiful day. Thank you!';
+    }
+  </script>
+</body>
+</html>

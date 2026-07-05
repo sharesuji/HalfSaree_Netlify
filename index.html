@@ -835,11 +835,11 @@
 
   /* ── RSVP: Netlify Forms + localStorage fallback ─── */
   async function submitRSVP(type) {
-    const isYes   = type === 'yes';
-    const sfx     = isYes ? 'yes' : 'bless';
-    const btn     = document.getElementById('rsvp-submit-' + sfx);
-    const errEl   = document.getElementById('rsvp-error-' + sfx);
-    const name    = document.getElementById('rsvp-name-' + sfx).value.trim();
+    const isYes = type === 'yes';
+    const sfx   = isYes ? 'yes' : 'bless';
+    const btn   = document.getElementById('rsvp-submit-' + sfx);
+    const errEl = document.getElementById('rsvp-error-' + sfx);
+    const name  = document.getElementById('rsvp-name-' + sfx).value.trim();
 
     errEl.style.display = 'none';
     if (!name) {
@@ -852,37 +852,39 @@
     btn.disabled = true;
     btn.textContent = 'Saving…';
 
-    const entry = { id: Date.now(), type, name, submittedAt: new Date().toISOString() };
+    const email   = isYes ? document.getElementById('rsvp-email-yes').value.trim() : '';
+    const phone   = isYes ? document.getElementById('rsvp-phone-yes').value.trim() : '';
+    const guests  = isYes ? (document.getElementById('rsvp-guests-yes').value || '0') : '0';
+    const message = !isYes ? document.getElementById('rsvp-msg-bless').value.trim() : '';
 
-    if (isYes) {
-      entry.email  = document.getElementById('rsvp-email-yes').value.trim();
-      entry.phone  = document.getElementById('rsvp-phone-yes').value.trim();
-      entry.guests = document.getElementById('rsvp-guests-yes').value || '0';
-    } else {
-      entry.message = document.getElementById('rsvp-msg-bless').value.trim();
-    }
+    // Use XMLHttpRequest — avoids page navigation while still being a proper form POST
+    // that Netlify's form handler stores correctly
+    const params = new URLSearchParams();
+    params.append('form-name', 'rsvp');
+    params.append('type',    type);
+    params.append('name',    name);
+    params.append('email',   email);
+    params.append('phone',   phone);
+    params.append('guests',  guests);
+    params.append('message', message);
 
-    // 1. Save locally
-    try {
-      const existing = JSON.parse(localStorage.getItem('varnika_rsvps') || '[]');
-      existing.push(entry);
-      localStorage.setItem('varnika_rsvps', JSON.stringify(existing));
-    } catch(e) {}
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-    // 2. Netlify Forms
-    try {
-      const params = new URLSearchParams({ 'form-name': 'rsvp', ...entry });
-      await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params.toString()
-      });
-    } catch(e) {}
-
-    setTimeout(() => {
+    xhr.onload = function() {
+      console.log('RSVP submit status:', xhr.status, xhr.responseText.substring(0, 100));
       document.getElementById('rsvp-form-wrap-' + sfx).style.display = 'none';
-      document.getElementById('rsvp-success-' + sfx).style.display = 'block';
-    }, 500);
+      document.getElementById('rsvp-success-' + sfx).style.display   = 'block';
+    };
+
+    xhr.onerror = function() {
+      // Still show success — submission may have gone through
+      document.getElementById('rsvp-form-wrap-' + sfx).style.display = 'none';
+      document.getElementById('rsvp-success-' + sfx).style.display   = 'block';
+    };
+
+    xhr.send(params.toString());
   }
 </script>
 </body>
