@@ -12,7 +12,7 @@ exports.handler = async function(event) {
 
   try {
     const body = JSON.parse(event.body || "{}");
-    const { name, email, phone, guests, type, message } = body;
+    const { name, email, phone, adults, kids, guests, type, message } = body;
 
     if (!name || !name.trim()) {
       return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: "Name is required" }) };
@@ -22,8 +22,8 @@ exports.handler = async function(event) {
     const token  = process.env.NETLIFY_API_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
 
     if (!siteID || !token) {
-      return { statusCode: 500, headers: CORS, body: JSON.stringify({ 
-        error: "Missing NETLIFY_SITE_ID or NETLIFY_API_TOKEN env vars" 
+      return { statusCode: 500, headers: CORS, body: JSON.stringify({
+        error: "Missing NETLIFY_SITE_ID or NETLIFY_API_TOKEN env vars"
       })};
     }
 
@@ -34,6 +34,8 @@ exports.handler = async function(event) {
       name:        name.trim(),
       email:       (email   || "").trim(),
       phone:       (phone   || "").trim(),
+      adults:      (adults  || "1").toString(),
+      kids:        (kids    || "0").toString(),
       guests:      (guests  || "0").toString(),
       type:        (type    || "yes"),
       message:     (message || "").trim(),
@@ -41,7 +43,7 @@ exports.handler = async function(event) {
     };
 
     await store.setJSON(id, entry);
-    console.log("Saved RSVP:", id, name);
+    console.log("Saved RSVP:", id, name, "adults:", adults, "kids:", kids);
     return { statusCode: 200, headers: CORS, body: JSON.stringify({ success: true, id }) };
 
   } catch (err) {
