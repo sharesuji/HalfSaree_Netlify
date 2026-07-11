@@ -190,7 +190,7 @@
     const bless = allRsvps.filter(r => r.type === 'bless');
     document.getElementById('stat-attending').textContent = att.length;
     document.getElementById('stat-blessings').textContent = bless.length;
-    document.getElementById('stat-guests').textContent    = att.reduce((s,r) => s+(parseInt(r.guests)||0)+1, 0);
+    document.getElementById('stat-guests').textContent    = att.reduce((s,r) => s+(parseInt(r.adults)||1)+(parseInt(r.kids)||0), 0);
     document.getElementById('stat-email').textContent     = allRsvps.filter(r => r.email).length;
   }
 
@@ -218,20 +218,22 @@
     tb.innerHTML = `<table>
       <thead><tr>
         <th>Name</th>${isAll?'<th>Status</th>':''}
-        <th>Contact</th><th>Guests</th><th>Submitted</th>
+        <th>Contact</th><th>Adults</th><th>Kids</th><th>Total</th><th>Submitted</th>
       </tr></thead>
       <tbody>${rows.map(r => {
         const isBless = r.type === 'bless';
         const date    = new Date(r.submittedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
         const contact = isBless ? '<span style="color:#bbb">—</span>'
           : `${r.email ? escHtml(r.email) : '<span style="color:#bbb">—</span>'}${r.phone?'<br/><span style="font-size:0.8rem;color:var(--muted)">'+escHtml(r.phone)+'</span>':''}`;
-        const guests  = isBless ? '<span style="color:#bbb">—</span>'
-          : (parseInt(r.guests)>0 ? `+${r.guests} guest${r.guests>1?'s':''}` : 'Solo');
+        const adults  = isBless ? '<span style="color:#bbb">—</span>' : (r.adults || '1');
+        const kids    = isBless ? '<span style="color:#bbb">—</span>' : (r.kids   || '0');
+        const total   = isBless ? '<span style="color:#bbb">—</span>'
+          : String((parseInt(r.adults)||1) + (parseInt(r.kids)||0));
         const msg     = isBless && r.message ? `<div class="blessing-msg">"${escHtml(r.message)}"</div>` : '';
         return `<tr>
           <td><strong>${escHtml(r.name)}</strong>${msg}</td>
           ${isAll?`<td><span class="badge${isBless?' bless':''}">${isBless?'🙏 Blessings':'🌸 Attending'}</span></td>`:''}
-          <td>${contact}</td><td>${guests}</td>
+          <td>${contact}</td><td>${adults}</td><td>${kids}</td><td>${total}</td>
           <td style="color:var(--muted);font-size:0.8rem;white-space:nowrap">${date}</td>
         </tr>`;
       }).join('')}</tbody></table>`;
@@ -242,8 +244,8 @@
     if (currentTab==='attending') rows = rows.filter(r=>r.type!=='bless');
     if (currentTab==='bless')     rows = rows.filter(r=>r.type==='bless');
     const csv = [
-      ['Name','Type','Email','Phone','Additional Guests','Blessing','Submitted'].join(','),
-      ...rows.map(r=>[r.name,r.type==='bless'?'Blessings':'Attending',r.email||'',r.phone||'',r.guests||'0',r.message||'',r.submittedAt]
+      ['Name','Type','Email','Phone','Adults','Kids','Total Guests','Blessing','Submitted'].join(','),
+      ...rows.map(r=>[r.name,r.type==='bless'?'Blessings':'Attending',r.email||'',r.phone||'',r.adults||'1',r.kids||'0',r.guests||'0',r.message||'',r.submittedAt]
         .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','))
     ].join('\n');
     const a = document.createElement('a');

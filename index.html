@@ -652,16 +652,40 @@
           <input class="form-input" type="tel" id="rsvp-phone-yes" placeholder="(555) 000-0000" />
         </div>
         <div class="form-group">
-          <label class="form-label" for="rsvp-guests-yes">Number of Guests</label>
-          <div class="form-select-wrap">
-            <select class="form-select" id="rsvp-guests-yes">
-              <option value="">Just me</option>
-              <option value="1">1 additional guest (2 total)</option>
-              <option value="2">2 additional guests (3 total)</option>
-              <option value="3">3 additional guests (4 total)</option>
-              <option value="4">4 additional guests (5 total)</option>
-              <option value="5">5+ additional guests</option>
-            </select>
+          <label class="form-label">Number of Guests</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+            <div>
+              <label class="form-label" for="rsvp-adults-yes" style="font-size:0.62rem; margin-bottom:0.3rem;">🧑 Adults</label>
+              <div class="form-select-wrap">
+                <select class="form-select" id="rsvp-adults-yes">
+                  <option value="0">0</option>
+                  <option value="1" selected>1 (just me)</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10+</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="form-label" for="rsvp-kids-yes" style="font-size:0.62rem; margin-bottom:0.3rem;">👧 Kids (under 12)</label>
+              <div class="form-select-wrap">
+                <select class="form-select" id="rsvp-kids-yes">
+                  <option value="0" selected>0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6+</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
         <p id="rsvp-error-yes" style="color:#c0392b; font-size:0.85rem; margin-bottom:0.75rem; display:none;"></p>
@@ -854,7 +878,9 @@
 
     const email   = isYes ? document.getElementById('rsvp-email-yes').value.trim() : '';
     const phone   = isYes ? document.getElementById('rsvp-phone-yes').value.trim() : '';
-    const guests  = isYes ? (document.getElementById('rsvp-guests-yes').value || '0') : '0';
+    const adults  = isYes ? (document.getElementById('rsvp-adults-yes').value || '1') : '0';
+    const kids    = isYes ? (document.getElementById('rsvp-kids-yes').value  || '0') : '0';
+    const guests  = isYes ? String(parseInt(adults||0) + parseInt(kids||0)) : '0';
     const message = !isYes ? document.getElementById('rsvp-msg-bless').value.trim() : '';
 
     // Use XMLHttpRequest — avoids page navigation while still being a proper form POST
@@ -864,7 +890,7 @@
       const res = await fetch('/.netlify/functions/submit-rsvp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone, guests, type, message })
+        body: JSON.stringify({ name, email, phone, adults, kids, guests, type, message })
       });
       const data = await res.json();
       console.log('RSVP submit result:', data);
