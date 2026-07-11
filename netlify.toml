@@ -1,12 +1,14 @@
 [build]
+  command   = "npm install"
   functions = "netlify/functions"
+  publish   = "."
 
 [[redirects]]
   from = "/admin"
-  to = "/admin.html"
+  to   = "/admin.html"
   status = 200
 
 [[redirects]]
   from = "/thank-you"
-  to = "/thank-you.html"
+  to   = "/thank-you.html"
   status = 200
