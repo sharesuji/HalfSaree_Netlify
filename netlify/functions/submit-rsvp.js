@@ -18,16 +18,25 @@ exports.handler = async function(event) {
       return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: "Name is required" }) };
     }
 
-    const store = getStore({ name: "rsvps", consistency: "strong" });
+    const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+    const token  = process.env.NETLIFY_API_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
+
+    if (!siteID || !token) {
+      return { statusCode: 500, headers: CORS, body: JSON.stringify({ 
+        error: "Missing NETLIFY_SITE_ID or NETLIFY_API_TOKEN env vars" 
+      })};
+    }
+
+    const store = getStore({ name: "rsvps", siteID, token });
     const id    = "rsvp_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
     const entry = {
       id,
-      name:    name.trim(),
-      email:   (email   || "").trim(),
-      phone:   (phone   || "").trim(),
-      guests:  (guests  || "0").toString(),
-      type:    (type    || "yes"),
-      message: (message || "").trim(),
+      name:        name.trim(),
+      email:       (email   || "").trim(),
+      phone:       (phone   || "").trim(),
+      guests:      (guests  || "0").toString(),
+      type:        (type    || "yes"),
+      message:     (message || "").trim(),
       submittedAt: new Date().toISOString(),
     };
 

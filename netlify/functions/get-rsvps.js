@@ -16,7 +16,16 @@ exports.handler = async function(event) {
   if (key !== password) return { statusCode: 401, headers: CORS, body: JSON.stringify({ error: "Unauthorized" }) };
 
   try {
-    const store = getStore({ name: "rsvps", consistency: "strong" });
+    const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+    const token  = process.env.NETLIFY_API_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
+
+    if (!siteID || !token) {
+      return { statusCode: 500, headers: CORS, body: JSON.stringify({ 
+        error: "Missing NETLIFY_SITE_ID or NETLIFY_API_TOKEN env vars" 
+      })};
+    }
+
+    const store = getStore({ name: "rsvps", siteID, token });
     const { blobs } = await store.list();
     console.log("Found blobs:", blobs.length);
 
