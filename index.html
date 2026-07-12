@@ -480,6 +480,47 @@
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
 
+    /* ── Add to Calendar ── */
+    .cal-section {
+      margin-top: 1.25rem;
+      border-top: 1px solid #e8d5dc;
+      padding-top: 1.25rem;
+    }
+    .cal-label {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.65rem;
+      display: block;
+    }
+    .cal-buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      border: 1.5px solid currentColor;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      background: transparent;
+      transition: background 0.2s, color 0.2s;
+    }
+    .cal-btn.google { color: #6B0F3A; }
+    .cal-btn.apple  { color: #2D1B3D; }
+    .cal-btn.outlook{ color: #0078d4; }
+    .cal-btn:hover  { background: var(--magenta); color: #fff; border-color: var(--magenta); }
+
     /* ── HOME BUTTON (fixed, bottom right) ── */
     .home-btn {
       position: fixed;
@@ -501,6 +542,7 @@
     .home-btn:hover { background: var(--plum); transform: translateY(-2px); }
     .home-btn.visible { display: block; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 <!-- Hidden form for Netlify detection -->
@@ -703,6 +745,20 @@
         <div class="check">🌸</div>
         <h3>You're on the list!</h3>
         <p>We are so excited to celebrate with you.<br/>See you on August 22nd!</p>
+        <div class="cal-section">
+          <span class="cal-label">Add to your calendar</span>
+          <div class="cal-buttons">
+            <a class="cal-btn google" id="cal-google" href="#" target="_blank" rel="noopener">
+              📅 Google
+            </a>
+            <a class="cal-btn apple" id="cal-apple" href="#" download="varnika-halfsaree.ics">
+              🍎 Apple
+            </a>
+            <a class="cal-btn outlook" id="cal-outlook" href="#" download="varnika-halfsaree.ics">
+              📧 Outlook
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -905,6 +961,94 @@
 
     document.getElementById('rsvp-form-wrap-' + sfx).style.display = 'none';
     document.getElementById('rsvp-success-' + sfx).style.display   = 'block';
+
+    // Send thank you email if email provided
+    if (email) sendThankYou({ name, email, type, adults, kids, message });
+  }
+
+  /* ── Add to Calendar ─── */
+  function buildCalendarLinks() {
+    const title    = "Varnika's Half Saree Ceremony - ఓణీల వేడుక";
+    const location = "Dia Amore Villa, 32218 Rogers Rd, Fulshear, TX 77441";
+    const details  = "Join us to celebrate Varnika's Half Saree Ceremony. A joyful milestone in Telugu tradition!";
+    // Aug 22 2026 6PM CDT = Aug 22 2026 23:00 UTC
+    const startUTC = "20260822T230000Z";
+    const endUTC   = "20260823T030000Z"; // ~4 hours
+
+    // Google Calendar
+    const googleUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" + encodeURIComponent(title) +
+      "&dates=" + startUTC + "/" + endUTC +
+      "&details=" + encodeURIComponent(details) +
+      "&location=" + encodeURIComponent(location);
+    document.getElementById('cal-google').href = googleUrl;
+
+    // ICS file content for Apple + Outlook
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Varnika Half Saree//EN",
+      "BEGIN:VEVENT",
+      "UID:" + Date.now() + "@varnika-halfsaree",
+      "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + "Z",
+      "DTSTART:" + startUTC,
+      "DTEND:"   + endUTC,
+      "SUMMARY:" + title,
+      "DESCRIPTION:" + details,
+      "LOCATION:" + location,
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+
+    const icsBlob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const icsUrl  = URL.createObjectURL(icsBlob);
+    document.getElementById('cal-apple').href   = icsUrl;
+    document.getElementById('cal-outlook').href = icsUrl;
+  }
+
+  // Build links when page loads
+  buildCalendarLinks();
+
+  /* ── EmailJS Thank You ─── */
+  // Replace these with your actual EmailJS credentials
+  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ATTENDING = 'YOUR_TEMPLATE_ATTENDING_ID';
+  const EMAILJS_TEMPLATE_BLESS     = 'YOUR_TEMPLATE_BLESS_ID';
+  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+
+  (function() {
+    if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    }
+  })();
+
+  function sendThankYou({ name, email, type, adults, kids, message }) {
+    if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+      console.log('EmailJS not configured — skipping thank you email');
+      return;
+    }
+
+    const isAttending = type !== 'bless';
+    const templateId  = isAttending ? EMAILJS_TEMPLATE_ATTENDING : EMAILJS_TEMPLATE_BLESS;
+
+    const params = isAttending ? {
+      to_name:    name,
+      to_email:   email,
+      adults:     adults || '1',
+      kids:       kids   || '0',
+      total:      String((parseInt(adults)||1) + (parseInt(kids)||0)),
+      event_date: 'August 22, 2026',
+      event_time: '6:00 PM',
+      venue:      'Dia Amore Villa, 32218 Rogers Rd, Fulshear, TX 77441',
+    } : {
+      to_name:    name,
+      to_email:   email,
+      blessing:   message || '',
+    };
+
+    emailjs.send(EMAILJS_SERVICE_ID, templateId, params)
+      .then(() => console.log('Thank you email sent to', email))
+      .catch(err => console.error('Email send failed:', err));
   }
 </script>
 </body>
